@@ -31,5 +31,5 @@ class OracleConnector(SQLConnector):
             return super().create_sqlalchemy_connection()
         except Exception as ex:
             raise RuntimeError(
-                f"Error connecting to DB at '{self.config['drivername']}://{self.config['username']}:<redacted>@{self.config['host']}/{self.config['database']}"
+                f"Error connecting to DB at '{self.config['drivername']}://{self.config['username']}:<redacted>@{self.config['host']}:{self.config['port']}/{self.config['database']}"
             ) from ex
