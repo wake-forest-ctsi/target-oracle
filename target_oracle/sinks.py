@@ -16,4 +16,7 @@ class OracleSink(SQLSink):
     in `connector_class` or by overriding the `connector` object.
     """
 
+    soft_delete_column_name = "sdc_deleted_at"
+    version_column_name = "sdc_table_version"
+
     connector_class = OracleConnector
