@@ -1,6 +1,7 @@
 """Oracle target sink class, which handles writing streams."""
 
 from singer_sdk.sinks import SQLSink
+import sqlalchemy
 
 from target_oracle.connector import OracleConnector
 
@@ -20,3 +21,14 @@ class OracleSink(SQLSink):
     version_column_name = "sdc_table_version"
 
     connector_class = OracleConnector
+
+    def activate_version(self, new_version: int) -> None:
+        """Bump the active version of the target table.
+
+        Args:
+            new_version: The version number to activate.
+        """
+
+        # temporary fix, parents don't seem to handle activate messages where table does not exist
+        if self.connector.table_exists(full_table_name=self.full_table_name):
+            super().activate_version(new_version)
