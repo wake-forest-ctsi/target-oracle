@@ -53,7 +53,7 @@ class OracleConnector(SQLConnector):
             The SQLAlchemy type representation of the data type.
         """
 
-        sqltype = super().to_sql_type(jsonschema_type)
+        sqltype = SQLConnector.to_sql_type(jsonschema_type)
         
         if type(sqltype) == sqlalchemy.types.VARCHAR:
             sqltype = sqlalchemy.types.VARCHAR(255)
