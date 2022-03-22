@@ -1,8 +1,7 @@
 from typing import Any, Dict
 
-import sqlalchemy
 from singer_sdk import SQLConnector
-
+import sqlalchemy
 
 class OracleConnector(SQLConnector):
     """The connector for Oracle.
@@ -57,5 +56,7 @@ class OracleConnector(SQLConnector):
         
         if type(sqltype) == sqlalchemy.types.VARCHAR:
             sqltype = sqlalchemy.types.VARCHAR(255)
+        elif type(sqltype) in (sqlalchemy.types.DATETIME, sqlalchemy.types.DATE):
+            sqltype = sqlalchemy.dialects.oracle.DATE
 
         return sqltype
