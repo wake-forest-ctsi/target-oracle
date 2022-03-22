@@ -33,3 +33,29 @@ class OracleConnector(SQLConnector):
             raise RuntimeError(
                 f"Error connecting to DB at '{self.config['drivername']}://{self.config['username']}:<redacted>@{self.config['host']}:{self.config['port']}/{self.config['database']}"
             ) from ex
+
+    @staticmethod
+    def to_sql_type(jsonschema_type: dict) -> sqlalchemy.types.TypeEngine:
+        """Return a JSON Schema representation of the provided type.
+
+        By default will call `typing.to_sql_type()`.
+
+        Developers may override this method to accept additional input argument types,
+        to support non-standard types, or to provide custom typing logic.
+
+        If overriding this method, developers should call the default implementation
+        from the base class for all unhandled cases.
+
+        Args:
+            jsonschema_type: The JSON Schema representation of the source type.
+
+        Returns:
+            The SQLAlchemy type representation of the data type.
+        """
+
+        sqltype = super().to_sql_type(jsonschema_type)
+        
+        if type(sqltype) == sqlalchemy.types.VARCHAR:
+            sqltype = sqlalchemy.types.VARCHAR(255)
+
+        return sqltype
