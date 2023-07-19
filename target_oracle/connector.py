@@ -15,7 +15,11 @@ class OracleConnector(SQLConnector):
 
     def get_sqlalchemy_url(self, config: Dict[str, Any]) -> str:
         """Generates a SQLAlchemy URL for Oracle."""
-        url = sqlalchemy.engine.url.URL.create(**{k:v for k, v in config.items() if k in ('drivername','username','password','host','port','database','query')})
+        url = ''
+        if config.get("sqlalchemy_url"):
+            url = config["sqlalchemy_url"]
+        else:
+            url = sqlalchemy.engine.url.URL.create(**{k:v for k, v in config.items() if k in ('drivername','username','password','host','port','database','query')})
         return str(url)
 
     def create_sqlalchemy_connection(self) -> sqlalchemy.engine.Connection:
@@ -55,8 +59,12 @@ class OracleConnector(SQLConnector):
         sqltype = SQLConnector.to_sql_type(jsonschema_type)
         
         if type(sqltype) == sqlalchemy.types.VARCHAR:
-            sqltype = sqlalchemy.types.VARCHAR(255)
+            maxLength = jsonschema_type.get('maxLength', 255)
+            if maxLength > 4000:
+                sqltype = sqlalchemy.sql.sqltypes.CLOB()
+            else:
+                sqltype = sqlalchemy.types.VARCHAR(maxLength)
         elif type(sqltype) in (sqlalchemy.types.DATETIME, sqlalchemy.types.DATE):
-            sqltype = sqlalchemy.dialects.oracle.DATE
+            sqltype = sqlalchemy.dialects.oracle.DATE()
 
         return sqltype

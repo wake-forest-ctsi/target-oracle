@@ -17,3 +17,6 @@ class TargetOracle(SQLTarget):
 
     config_jsonschema = target_config.to_dict()
     
+if __name__ == "__main__":
+    TargetOracle.cli()
+
